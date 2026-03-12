@@ -3411,10 +3411,25 @@
     const MT = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
     function dk(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` }
     function tk() { return dk(new Date()) }
-    function sGL(p) { try { localStorage.setItem('kv_gl_posts', JSON.stringify(p)) } catch (e) { } }
-    let isPrem = localStorage.getItem('kv_prem') === 'true';
+    function sGL(p) { try { lsSet('kv_gl_posts', JSON.stringify(p)) } catch (e) { } }
+    let isPrem = lsGet('kv_prem') === 'true';
     let currentUser = null;
     let _C_D = null, _C_P = null, _C_Pr = null;
+
+    // ── USER-SCOPED LOCALSTORAGE ─────────────────────────────
+    function _uid() {
+      // currentUser varsa id'sini, yoksa 'guest' döndür
+      return currentUser?.id || 'guest';
+    }
+    function lsGet(key) {
+      try { return localStorage.getItem(key + '_' + _uid()); } catch(e) { return null; }
+    }
+    function lsSet(key, val) {
+      try { localStorage.setItem(key + '_' + _uid(), val); } catch(e) {}
+    }
+    function lsRemove(key) {
+      try { localStorage.removeItem(key + '_' + _uid()); } catch(e) {}
+    }
     let curBanner = { emoji: '🌸', bg: 'linear-gradient(135deg,#c9907a,#dba898)' };
 
     function setBanner(el, emoji, bg) {
@@ -3447,7 +3462,7 @@
     async function lD(f = false) {
       if (_C_D && !f) return _C_D;
       let local = {};
-      try { local = JSON.parse(localStorage.getItem('kv_diary') || '{}') } catch (e) { }
+      try { local = JSON.parse(lsGet('kv_diary') || '{}') } catch (e) { }
       const session = await getSession();
       if (session) {
         const { data, error } = await supabaseClient.from('diaries').select('*').eq('user_id', session.user.id);
@@ -3466,11 +3481,16 @@
     async function lP(f = false) {
       if (_C_P && !f) return _C_P;
       let local = [];
-      try { local = JSON.parse(localStorage.getItem('kv_posts') || '[]') } catch (e) { }
+      try { local = JSON.parse(lsGet('kv_posts') || '[]') } catch (e) { }
       if (supabaseClient) {
         const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
         if (!error && data) {
-          _C_P = data.length > 0 ? data : local;
+          // Supabase kolonlarını uygulama formatına çevir
+          const mapped = data.map(p => ({
+            ...p,
+            author: { fn: p.author_name || 'anonim', streak: p.author_streak || 0 }
+          }));
+          _C_P = mapped.length > 0 ? mapped : local;
           return _C_P;
         }
       }
@@ -3479,19 +3499,45 @@
 
     async function lPr(f = false) {
       if (_C_Pr && !f) return _C_Pr;
-      let local = { fn: 'Zeynep', ln: 'A.', joined: 'Ocak 2025' };
-      try { const s = localStorage.getItem('kv_prof'); if (s) local = JSON.parse(s); } catch (e) { }
       const session = await getSession();
+      // Default empty profile
+      let local = { fn: '', ln: '', joined: '' };
+      
+      // Try to load from localStorage
+      try { 
+        const s = lsGet('kv_prof'); 
+        if (s) local = JSON.parse(s); 
+      } catch (e) { }
+
       if (session) {
         const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
-        if (!error && data) { _C_Pr = { ...local, ...data }; return _C_Pr; }
+        if (!error && data) { 
+          _C_Pr = { ...local, ...data }; 
+          return _C_Pr; 
+        } else if (session.user.user_metadata?.first_name) {
+          // Fallback to metadata if DB row doesn't exist yet
+          const now = new Date();
+          local.fn = session.user.user_metadata.first_name;
+          local.ln = session.user.user_metadata.last_name || '';
+          local.joined = `${MT[now.getMonth()]} ${now.getFullYear()}`;
+          _C_Pr = local;
+          return _C_Pr;
+        }
       }
+      
+      // Final fallback to defaults if still empty
+      if (!local.fn) {
+        local.fn = 'Zeynep';
+        local.ln = 'A.';
+        local.joined = 'Ocak 2025';
+      }
+      
       _C_Pr = local; return local;
     }
 
     async function sD(d) {
       _C_D = d;
-      try { localStorage.setItem('kv_diary', JSON.stringify(d)) } catch (e) { }
+      try { lsSet('kv_diary', JSON.stringify(d)) } catch (e) { }
       const session = await getSession();
       if (session) {
         const entries = Object.keys(d).map(date => ({
@@ -3507,7 +3553,7 @@
 
     async function sP(p) {
       _C_P = p;
-      try { localStorage.setItem('kv_posts', JSON.stringify(p)) } catch (e) { }
+      try { lsSet('kv_posts', JSON.stringify(p)) } catch (e) { }
       const session = await getSession();
       if (session && p.length > 0) {
         const latest = p[0];
@@ -3518,7 +3564,9 @@
             mood: latest.mood,
             likes: latest.likes || 0,
             comments: latest.comments || 0,
-            pinned: latest.pinned || false
+            pinned: latest.pinned || false,
+            author_name: latest.author?.fn || session.user.user_metadata?.first_name || 'anonim',
+            author_streak: latest.author?.streak || 0
           }]).select();
           if (data && data[0]) latest.id_db = data[0].id;
         }
@@ -3539,7 +3587,7 @@
 
     async function sPr(p) {
       _C_Pr = p;
-      try { localStorage.setItem('kv_prof', JSON.stringify(p)) } catch (e) { }
+      try { lsSet('kv_prof', JSON.stringify(p)) } catch (e) { }
       const session = await getSession();
       if (session) {
         await supabaseClient.from('profiles').upsert({
@@ -3640,7 +3688,7 @@
     }
     async function doPremium() {
       isPrem = true;
-      localStorage.setItem('kv_prem', 'true');
+      lsSet('kv_prem', 'true');
       closePM();
       await renderRH();
       await renderPR();
@@ -3669,13 +3717,13 @@
         return;
       }
       const now = Date.now();
-      const lastP = Number(localStorage.getItem('kv_last_post') || 0);
+      const lastP = Number(lsGet('kv_last_post') || 0);
       const canP = now - lastP >= 24 * 60 * 60 * 1000;
       const pVal = document.getElementById('postRightVal');
       if (pVal) pVal.innerHTML = `${canP ? 1 : 0} <sub>/ 24 sa</sub>`;
       document.getElementById('postRight')?.classList.toggle('warn', !canP);
 
-      let lastCs = JSON.parse(localStorage.getItem('kv_last_cmts') || '[]');
+      let lastCs = JSON.parse(lsGet('kv_last_cmts') || '[]');
       lastCs = lastCs.filter(t => now - t < 15 * 60 * 60 * 1000);
       const cRem = Math.max(0, 3 - lastCs.length);
       const cVal = document.getElementById('cmtRightVal');
@@ -3687,23 +3735,23 @@
       if (isPrem) return true;
       const now = Date.now();
       if (type === 'post') {
-        const last = Number(localStorage.getItem('kv_last_post') || 0);
+        const last = Number(lsGet('kv_last_post') || 0);
         if (now - last < 24 * 60 * 60 * 1000) {
           const rem = 24 * 60 * 60 * 1000 - (now - last);
           const hrs = Math.ceil(rem / 3600000);
           alert(`Paylaşım limitine ulaştın. ${hrs} saat sonra tekrar paylaşabilirsin. Sınırsız için Premium'a geç! 🌸`);
           openPM(); return false;
         }
-        localStorage.setItem('kv_last_post', now);
+        lsSet('kv_last_post', now);
       } else {
-        let list = JSON.parse(localStorage.getItem('kv_last_cmts') || '[]');
+        let list = JSON.parse(lsGet('kv_last_cmts') || '[]');
         list = list.filter(t => now - t < 15 * 60 * 60 * 1000);
         if (list.length >= 3) {
           alert("Yorum limitine ulaştın (15 saatte 3 yorum). Sınırsız için Premium'a geç! 🌱");
           openPM(); return false;
         }
         list.push(now);
-        localStorage.setItem('kv_last_cmts', JSON.stringify(list));
+        lsSet('kv_last_cmts', JSON.stringify(list));
       }
       updateRightsUI();
       return true;
@@ -3716,7 +3764,7 @@
 
     function fmtT(t) { if (typeof t !== 'number') return t; const m = Math.floor((Date.now() - t) / 60000); if (m < 1) return 'az önce'; if (m < 60) return m + ' dk önce'; const h = Math.floor(m / 60); if (h < 24) return h + ' sa önce'; return Math.floor(h / 24) + ' gün önce' }
     async function initM() {
-      if (!localStorage.getItem('kv_time_fix')) { localStorage.removeItem('kv_posts'); localStorage.setItem('kv_time_fix', 'true'); }
+      if (!lsGet('kv_time_fix')) { lsRemove('kv_posts'); lsSet('kv_time_fix', 'true'); }
       try {
         const sp = await lP();
         POSTS = sp && sp.length > 0 ? sp : JSON.parse(JSON.stringify(DP));
@@ -3733,11 +3781,11 @@
             }, {});
           }
         } else {
-          const sc = localStorage.getItem('kv_cmts');
+          const sc = lsGet('kv_cmts');
           CMTS = sc ? JSON.parse(sc) : JSON.parse(JSON.stringify(DC));
         }
 
-        const sgl = localStorage.getItem('kv_gl_posts');
+        const sgl = lsGet('kv_gl_posts');
         GL_POSTS = sgl ? JSON.parse(sgl) : [];
         if (session) {
           // Optionally load shared diaries from posts table if we identify them differently
@@ -3750,8 +3798,8 @@
     }
     async function saveM() {
       try {
-        localStorage.setItem('kv_posts', JSON.stringify(POSTS));
-        localStorage.setItem('kv_cmts', JSON.stringify(CMTS));
+        lsSet('kv_posts', JSON.stringify(POSTS));
+        lsSet('kv_cmts', JSON.stringify(CMTS));
         sGL(GL_POSTS);
         const session = await getSession();
         if (session) {
@@ -4014,13 +4062,13 @@
 
     function initNotifs() {
       try {
-        const saved = localStorage.getItem('kv_notifs');
+        const saved = lsGet('kv_notifs');
         NOTIFS = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_NOTIFS));
       } catch (e) { NOTIFS = JSON.parse(JSON.stringify(DEFAULT_NOTIFS)); }
     }
 
     function saveNotifs() {
-      try { localStorage.setItem('kv_notifs', JSON.stringify(NOTIFS)); } catch (e) { }
+      try { lsSet('kv_notifs', JSON.stringify(NOTIFS)); } catch (e) { }
     }
 
     function renderNotifs() {
@@ -4077,9 +4125,9 @@
 
 
     // Günlük verilerini bir kere temizle
-    if (!localStorage.getItem('kv_diary_reset_v1')) {
-      localStorage.removeItem('kv_diary');
-      localStorage.setItem('kv_diary_reset_v1', 'done');
+    if (!lsGet('kv_diary_reset_v1')) {
+      lsRemove('kv_diary');
+      lsSet('kv_diary_reset_v1', 'done');
     }
 
     // ── BİLDİRİM KAYDIRMA SİSTEMİ ────────────────────────────
@@ -4471,7 +4519,9 @@
           mood: gpaySelMood || 'mutlu',
           likes: 0,
           comments: 0,
-          pinned: false
+          pinned: false,
+          author_name: session.user.user_metadata?.first_name || 'anonim',
+          author_streak: 0
         }]);
       }
 
@@ -4821,9 +4871,13 @@
         return;
       }
       try {
-        const { error } = await supabaseClient.auth.signOut();
-        if (error) throw error;
-        localStorage.removeItem('kv_prem');
+        await supabaseClient.auth.signOut();
+        // Clear all KV and session data
+        _C_D = null; _C_P = null; _C_Pr = null;
+        Object.keys(localStorage).forEach(k => {
+          if (k.startsWith('kv_')) localStorage.removeItem(k);
+        });
+        location.reload();
       } catch (e) {
         const msg = e.message || '';
         if (msg.includes('session_not_found')) {
@@ -4839,22 +4893,30 @@
     async function startKivilcim() {
       const sessionCheck = (session) => {
         currentUser = session ? session.user : null;
+        // Hesap değişince cache temizle
+        _C_D = null; _C_P = null; _C_Pr = null;
         const tabB = document.querySelector('.tab-bar');
 
         if (session) {
-          // If auth screen is active or no screen is active, go to meydan
           const activeScreen = document.querySelector('.screen.active');
           if (!activeScreen || activeScreen.id === 's-auth') {
             goTab('meydan');
           }
           if (tabB) tabB.style.display = 'flex';
-          lPr().then(p => { 
+          
+          // Force refresh profile with session metadata
+          lPr(true).then(p => { 
               if (session.user.user_metadata?.first_name) {
                   p.fn = session.user.user_metadata.first_name;
                   p.ln = session.user.user_metadata.last_name || '';
-                  sPr(p);
+                  if (!p.joined) {
+                    const now = new Date();
+                    p.joined = `${MT[now.getMonth()]} ${now.getFullYear()}`;
+                  }
+                  sPr(p).then(() => renderPR());
+              } else {
+                  renderPR();
               }
-              renderPR(); 
           });
           renderF();
         } else {
