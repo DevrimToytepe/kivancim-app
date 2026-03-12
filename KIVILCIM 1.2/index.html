@@ -311,7 +311,8 @@
 
     #auth-canvas {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       z-index: 1;
@@ -319,9 +320,11 @@
 
     .form-area {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       padding: 28px 28px 44px;
-      background: linear-gradient(to top, rgba(232,180,165,0.98) 0%, rgba(232,185,170,0.93) 55%, transparent 100%);
+      background: linear-gradient(to top, rgba(232, 180, 165, 0.98) 0%, rgba(232, 185, 170, 0.93) 55%, transparent 100%);
       z-index: 10;
     }
 
@@ -334,13 +337,13 @@
       text-align: center;
       margin-bottom: 2px;
       letter-spacing: 4px;
-      text-shadow: 0 2px 20px rgba(180,100,80,0.25);
+      text-shadow: 0 2px 20px rgba(180, 100, 80, 0.25);
     }
 
     .auth-tagline {
       font-weight: 300;
       font-size: 11px;
-      color: rgba(120,60,50,0.6);
+      color: rgba(120, 60, 50, 0.6);
       text-align: center;
       letter-spacing: 5px;
       text-transform: uppercase;
@@ -353,13 +356,20 @@
       margin-bottom: 11px;
     }
 
-    .input-row .input-group { flex: 1; margin-bottom: 0; }
-    .input-group { margin-bottom: 11px; position: relative; }
+    .input-row .input-group {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .input-group {
+      margin-bottom: 11px;
+      position: relative;
+    }
 
     .input-label {
       font-weight: 300;
       font-size: 9px;
-      color: rgba(120,60,50,0.65);
+      color: rgba(120, 60, 50, 0.65);
       letter-spacing: 2.5px;
       text-transform: uppercase;
       margin-bottom: 6px;
@@ -368,8 +378,8 @@
 
     .input-field {
       width: 100%;
-      background: rgba(255,245,242,0.55);
-      border: 1px solid rgba(200,130,110,0.25);
+      background: rgba(255, 245, 242, 0.55);
+      border: 1px solid rgba(200, 130, 110, 0.25);
       border-radius: 12px;
       padding: 12px 16px;
       font-family: 'Nunito', sans-serif;
@@ -381,11 +391,14 @@
       caret-color: #c9907a;
     }
 
-    .input-field::placeholder { color: rgba(150,80,65,0.35); }
+    .input-field::placeholder {
+      color: rgba(150, 80, 65, 0.35);
+    }
+
     .input-field:focus {
-      border-color: rgba(180,100,80,0.4);
-      background: rgba(255,248,245,0.75);
-      box-shadow: 0 0 0 3px rgba(200,130,110,0.1);
+      border-color: rgba(180, 100, 80, 0.4);
+      background: rgba(255, 248, 245, 0.75);
+      box-shadow: 0 0 0 3px rgba(200, 130, 110, 0.1);
     }
 
     .kvkk {
@@ -403,12 +416,14 @@
 
     .kvkk label {
       font-size: 10px;
-      color: rgba(120,60,50,0.55);
+      color: rgba(120, 60, 50, 0.55);
       font-weight: 300;
       line-height: 1.5;
     }
 
-    .kvkk label span { color: #c9907a; }
+    .kvkk label span {
+      color: #c9907a;
+    }
 
     .btn-primary {
       width: 100%;
@@ -423,27 +438,40 @@
       cursor: pointer;
       transition: all 0.3s ease;
       letter-spacing: 1.5px;
-      box-shadow: 0 4px 20px rgba(180,100,80,0.3);
+      box-shadow: 0 4px 20px rgba(180, 100, 80, 0.3);
     }
 
     .btn-primary:hover {
       background: linear-gradient(135deg, #d4a090, #e0a878);
-      box-shadow: 0 8px 32px rgba(180,100,80,0.4);
+      box-shadow: 0 8px 32px rgba(180, 100, 80, 0.4);
       transform: translateY(-1px);
     }
 
-    .btn-primary:disabled { opacity: 0.7; transform: none; }
+    .btn-primary:disabled {
+      opacity: 0.7;
+      transform: none;
+    }
 
     .hint {
       text-align: center;
       margin-top: 14px;
       font-size: 11px;
-      color: rgba(120,60,50,0.55);
+      color: rgba(120, 60, 50, 0.55);
       font-weight: 300;
     }
 
-    .hint span { color: #c9907a; cursor: pointer; }
-    #auth-error { font-size:10px; color:#c0504a; text-align:center; margin-bottom:10px; display:none; }
+    .hint span {
+      color: #c9907a;
+      cursor: pointer;
+    }
+
+    #auth-error {
+      font-size: 10px;
+      color: #c0504a;
+      text-align: center;
+      margin-bottom: 10px;
+      display: none;
+    }
 
     .auth-link {
       font-size: 13px;
@@ -2643,31 +2671,34 @@
           <div class="input-row">
             <div class="input-group">
               <label class="input-label">isim</label>
-              <input class="input-field" id="auth-fn" type="text" placeholder="Adın" oninput="updateBloom()"/>
+              <input class="input-field" id="auth-fn" type="text" placeholder="Adın" oninput="updateBloom()" />
             </div>
             <div class="input-group">
               <label class="input-label">soyisim</label>
-              <input class="input-field" id="auth-ln" type="text" placeholder="Soyadın" oninput="updateBloom()"/>
+              <input class="input-field" id="auth-ln" type="text" placeholder="Soyadın" oninput="updateBloom()" />
             </div>
           </div>
 
           <div class="input-group">
             <label class="input-label">e-posta</label>
-            <input class="input-field" id="auth-email" type="email" placeholder="ornek@mail.com" oninput="updateBloom()"/>
+            <input class="input-field" id="auth-email" type="email" placeholder="ornek@mail.com"
+              oninput="updateBloom()" />
           </div>
 
           <div class="input-group">
             <label class="input-label">telefon</label>
-            <input class="input-field" id="auth-phone" type="tel" placeholder="+90 5__ ___ __ __" maxlength="16" oninput="formatPhone(this)"/>
+            <input class="input-field" id="auth-phone" type="tel" placeholder="+90 5__ ___ __ __" maxlength="16"
+              oninput="formatPhone(this)" />
           </div>
 
           <div class="input-group">
             <label class="input-label">şifre</label>
-            <input class="input-field" id="auth-pass" type="password" placeholder="En az 8 karakter" maxlength="20" oninput="updateBloom()"/>
+            <input class="input-field" id="auth-pass" type="password" placeholder="En az 8 karakter" maxlength="20"
+              oninput="updateBloom()" />
           </div>
 
           <div class="kvkk">
-            <input type="checkbox" id="kvkkCheck"/>
+            <input type="checkbox" id="kvkkCheck" />
             <label for="kvkkCheck">
               <span>KVKK Aydınlatma Metni</span>'ni okudum, kişisel verilerimin işlenmesini kabul ediyorum.
             </label>
@@ -2677,18 +2708,21 @@
         <div id="login-ui">
           <div class="input-group">
             <label class="input-label">e-posta</label>
-            <input class="input-field" id="login-email" type="email" placeholder="ornek@mail.com" oninput="updateBloom()"/>
+            <input class="input-field" id="login-email" type="email" placeholder="ornek@mail.com"
+              oninput="updateBloom()" />
           </div>
           <div class="input-group">
             <label class="input-label">şifre</label>
-            <input class="input-field" id="login-pass" type="password" placeholder="••••••••" maxlength="20" oninput="updateBloom()"/>
+            <input class="input-field" id="login-pass" type="password" placeholder="••••••••" maxlength="20"
+              oninput="updateBloom()" />
           </div>
         </div>
 
         <div id="auth-error"></div>
 
         <button class="btn-primary" id="btn-auth" onclick="handleAuth()">Giriş Yap</button>
-        <div class="hint" id="auth-hint">Henüz hesabın yok mu? <span onclick="setAuthTab('register')">Kayıt ol</span></div>
+        <div class="hint" id="auth-hint">Henüz hesabın yok mu? <span onclick="setAuthTab('register')">Kayıt ol</span>
+        </div>
       </div>
     </div>
 
@@ -3422,13 +3456,13 @@
       return currentUser?.id || 'guest';
     }
     function lsGet(key) {
-      try { return localStorage.getItem(key + '_' + _uid()); } catch(e) { return null; }
+      try { return localStorage.getItem(key + '_' + _uid()); } catch (e) { return null; }
     }
     function lsSet(key, val) {
-      try { localStorage.setItem(key + '_' + _uid(), val); } catch(e) {}
+      try { localStorage.setItem(key + '_' + _uid(), val); } catch (e) { }
     }
     function lsRemove(key) {
-      try { localStorage.removeItem(key + '_' + _uid()); } catch(e) {}
+      try { localStorage.removeItem(key + '_' + _uid()); } catch (e) { }
     }
     let curBanner = { emoji: '🌸', bg: 'linear-gradient(135deg,#c9907a,#dba898)' };
 
@@ -3502,18 +3536,18 @@
       const session = await getSession();
       // Default empty profile
       let local = { fn: '', ln: '', joined: '' };
-      
+
       // Try to load from localStorage
-      try { 
-        const s = lsGet('kv_prof'); 
-        if (s) local = JSON.parse(s); 
+      try {
+        const s = lsGet('kv_prof');
+        if (s) local = JSON.parse(s);
       } catch (e) { }
 
       if (session) {
         const { data, error } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
-        if (!error && data) { 
-          _C_Pr = { ...local, ...data }; 
-          return _C_Pr; 
+        if (!error && data) {
+          _C_Pr = { ...local, ...data };
+          return _C_Pr;
         } else if (session.user.user_metadata?.first_name) {
           // Fallback to metadata if DB row doesn't exist yet
           const now = new Date();
@@ -3524,14 +3558,14 @@
           return _C_Pr;
         }
       }
-      
+
       // Final fallback to defaults if still empty
       if (!local.fn) {
         local.fn = 'Zeynep';
         local.ln = 'A.';
         local.joined = 'Ocak 2025';
       }
-      
+
       _C_Pr = local; return local;
     }
 
@@ -3996,7 +4030,12 @@
     async function renderPR() {
       const diary = await lD(), streak = await calcS(), pr = await lPr();
       applyBanner();
-      document.getElementById('pSD').textContent = (POSTS.length || 0);
+      // Sadece bu kullanıcıya ait postları say
+      const session = await getSession();
+      const myPostCount = session
+        ? (POSTS.filter(p => p.user_id === session.user.id).length || 0)
+        : (POSTS.length || 0);
+      document.getElementById('pSD').textContent = myPostCount;
       document.getElementById('pSS').textContent = streak;
       document.getElementById('pSSI').innerHTML = kSVG(streak, Math.min(24 + streak * 1.5, 36));
       const sf = streak === 0 ? 40 : Math.min(40 + streak * 4, 68);
@@ -4006,8 +4045,17 @@
       else { const ic = kSVG(streak, Math.min(16 + streak * 1.5, 26)); stEl.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle">${ic} ${streak === 1 ? '1 Günlük Serin Var!' : streak + ' Günlük Seri!'}</span>`; }
       const dots = document.getElementById('pSDs'); dots.innerHTML = '';
       for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); const k = dk(d); const e = diary[k]; const ok = e && e.text && e.text.length >= 200; const dot = document.createElement('div'); dot.className = 'sdot' + (ok ? (i === 0 ? ' tod' : ' fil') : ''); dots.appendChild(dot); }
-      // Fix: Count all comments globally (from CMTS) as these are the user's comments in this simulation
-      const totalCmts = Object.values(CMTS).reduce((acc, list) => acc + list.length, 0);
+      // Sadece bu kullanıcının yorumlarını say
+      let totalCmts = 0;
+      if (supabaseClient && session) {
+        const { count } = await supabaseClient
+          .from('comments')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', session.user.id);
+        totalCmts = count || 0;
+      } else {
+        totalCmts = Object.values(CMTS).reduce((acc, list) => acc + list.length, 0);
+      }
       document.getElementById('pSP').textContent = totalCmts;
       document.getElementById('pNm').textContent = `${pr.fn} ${pr.ln}`;
       document.getElementById('pJn').textContent = `${pr.joined}'ten beri burada`;
@@ -4025,11 +4073,11 @@
       const fn = document.getElementById('eFN').value.trim();
       const ln = document.getElementById('eLN').value.trim();
       if (!fn) { alert('İsim alanı boş bırakılamaz.'); return; }
-      
+
       const pr = await lPr();
       pr.fn = fn;
       pr.ln = ln;
-      
+
       try {
         await sPr(pr);
         closeMdl('edit');
@@ -4565,7 +4613,7 @@
     let bloom = 0, targetBloom = 0, time = 0;
     const pollens = [];
 
-    const stars = Array.from({length:120}, () => ({
+    const stars = Array.from({ length: 120 }, () => ({
       x: Math.random() * 390, y: Math.random() * 420,
       r: Math.random() * 1.2 + 0.2,
       flicker: Math.random() * Math.PI * 2,
@@ -4574,15 +4622,15 @@
     }));
 
     const miniFlowers = [
-      { x: 42,  y: 140, size: 0.28, bloom: 0, target: 0, threshold: 0.06, angle: 0.3 },
+      { x: 42, y: 140, size: 0.28, bloom: 0, target: 0, threshold: 0.06, angle: 0.3 },
       { x: 348, y: 160, size: 0.22, bloom: 0, target: 0, threshold: 0.14, angle: -0.5 },
-      { x: 28,  y: 360, size: 0.18, bloom: 0, target: 0, threshold: 0.22, angle: 0.8 },
+      { x: 28, y: 360, size: 0.18, bloom: 0, target: 0, threshold: 0.22, angle: 0.8 },
       { x: 362, y: 310, size: 0.24, bloom: 0, target: 0, threshold: 0.30, angle: -0.2 },
-      { x: 65,  y: 220, size: 0.16, bloom: 0, target: 0, threshold: 0.40, angle: 1.1 },
+      { x: 65, y: 220, size: 0.16, bloom: 0, target: 0, threshold: 0.40, angle: 1.1 },
       { x: 332, y: 440, size: 0.20, bloom: 0, target: 0, threshold: 0.50, angle: -0.9 },
-      { x: 48,  y: 440, size: 0.15, bloom: 0, target: 0, threshold: 0.62, angle: 0.6 },
-      { x: 345, y: 95,  size: 0.17, bloom: 0, target: 0, threshold: 0.74, angle: -0.4 },
-      { x: 195, y: 60,  size: 0.14, bloom: 0, target: 0, threshold: 0.86, angle: 0.0 },
+      { x: 48, y: 440, size: 0.15, bloom: 0, target: 0, threshold: 0.62, angle: 0.6 },
+      { x: 345, y: 95, size: 0.17, bloom: 0, target: 0, threshold: 0.74, angle: -0.4 },
+      { x: 195, y: 60, size: 0.14, bloom: 0, target: 0, threshold: 0.86, angle: 0.0 },
     ];
 
     function setAuthTab(mode) {
@@ -4602,10 +4650,10 @@
     }
 
     function formatPhone(el) {
-      let v = el.value.replace(/\D/g,'');
-      if(v.startsWith('90')) v = v.slice(2);
-      if(v.length > 10) v = v.slice(0,10);
-      if(v.length > 0) el.value = '+90 ' + v.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/,'$1 $2 $3 $4').replace(/(\d{3})(\d{3})(\d{2})$/,'$1 $2 $3').replace(/(\d{3})(\d{3})$/,'$1 $2').replace(/(\d{3})$/,'$1');
+      let v = el.value.replace(/\D/g, '');
+      if (v.startsWith('90')) v = v.slice(2);
+      if (v.length > 10) v = v.slice(0, 10);
+      if (v.length > 0) el.value = '+90 ' + v.replace(/(\d{3})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4').replace(/(\d{3})(\d{3})(\d{2})$/, '$1 $2 $3').replace(/(\d{3})(\d{3})$/, '$1 $2').replace(/(\d{3})$/, '$1');
       else el.value = '';
       updateBloom();
     }
@@ -4616,7 +4664,7 @@
         const fn = Math.min((document.getElementById('auth-fn')?.value.trim().length || 0) / 3, 1);
         const ln = Math.min((document.getElementById('auth-ln')?.value.trim().length || 0) / 3, 1);
         const em = Math.min((document.getElementById('auth-email')?.value.length || 0) / 12, 1);
-        const ph = Math.min((document.getElementById('auth-phone')?.value.replace(/\D/g,'').length || 0) / 10, 1);
+        const ph = Math.min((document.getElementById('auth-phone')?.value.replace(/\D/g, '').length || 0) / 10, 1);
         const pw = Math.min((document.getElementById('auth-pass')?.value.length || 0) / 8, 1);
         progress = (fn + ln + em + ph + pw) / 5;
       } else {
@@ -4641,161 +4689,161 @@
       if (bloom < 0.75) return;
       const angle = Math.random() * Math.PI * 2, speed = Math.random() * 0.6 + 0.2;
       pollens.push({
-        x: cx + (Math.random()-0.5)*20, y: cy + (Math.random()-0.5)*20,
-        vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 0.4,
-        life: 1, decay: Math.random()*0.008+0.004, r: Math.random()*2+1,
-        color: Math.random()>0.5 ? '#f5e080' : '#e8c870'
+        x: cx + (Math.random() - 0.5) * 20, y: cy + (Math.random() - 0.5) * 20,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 0.4,
+        life: 1, decay: Math.random() * 0.008 + 0.004, r: Math.random() * 2 + 1,
+        color: Math.random() > 0.5 ? '#f5e080' : '#e8c870'
       });
     }
 
-    function lerp(a,b,t){ return a+(b-a)*t; }
-    function easeOut(t){ return 1-(1-t)*(1-t); }
-    function easeInOut(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function easeOut(t) { return 1 - (1 - t) * (1 - t); }
+    function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
 
     function drawPetal(ctx, length, width, color1, color2, veinColor, alpha, curlX, curlY) {
       ctx.save(); ctx.globalAlpha = alpha;
       const l = length, w = width;
-      const grad = ctx.createLinearGradient(0, 0, w*0.3, -l);
+      const grad = ctx.createLinearGradient(0, 0, w * 0.3, -l);
       grad.addColorStop(0, color1); grad.addColorStop(0.4, color2);
-      grad.addColorStop(0.75,'rgba(255,255,255,0.85)'); grad.addColorStop(1, 'rgba(240,235,248,0.6)');
+      grad.addColorStop(0.75, 'rgba(255,255,255,0.85)'); grad.addColorStop(1, 'rgba(240,235,248,0.6)');
       ctx.beginPath(); ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(-w*0.5+curlX*0.3, -l*0.25, -w*0.65+curlX, -l*0.6, curlX*0.5, -l+curlY);
-      ctx.bezierCurveTo(curlX*0.5, -l+curlY, w*0.65-curlX, -l*0.6, w*0.5-curlX*0.3, -l*0.25);
+      ctx.bezierCurveTo(-w * 0.5 + curlX * 0.3, -l * 0.25, -w * 0.65 + curlX, -l * 0.6, curlX * 0.5, -l + curlY);
+      ctx.bezierCurveTo(curlX * 0.5, -l + curlY, w * 0.65 - curlX, -l * 0.6, w * 0.5 - curlX * 0.3, -l * 0.25);
       ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
       ctx.strokeStyle = 'rgba(200,170,220,0.25)'; ctx.lineWidth = 0.5; ctx.stroke();
       ctx.beginPath(); ctx.moveTo(0, 0);
-      ctx.bezierCurveTo(curlX*0.2, -l*0.4, curlX*0.4, -l*0.7, curlX*0.5, -l+curlY+5);
-      ctx.strokeStyle = veinColor; ctx.lineWidth = 0.8; ctx.globalAlpha = alpha*0.5; ctx.stroke();
-      ctx.globalAlpha = alpha*0.25; ctx.lineWidth = 0.4;
-      for(let i=1; i<=5; i++) {
-        const t = i/6, bx = lerp(0, curlX*0.5, t), by = -l*t;
-        ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx+w*0.3*t, by-l*0.06, bx+w*(0.4+t*0.1), by+l*0.04); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx-w*0.3*t, by-l*0.06, bx-w*(0.4+t*0.1), by+l*0.04); ctx.stroke();
+      ctx.bezierCurveTo(curlX * 0.2, -l * 0.4, curlX * 0.4, -l * 0.7, curlX * 0.5, -l + curlY + 5);
+      ctx.strokeStyle = veinColor; ctx.lineWidth = 0.8; ctx.globalAlpha = alpha * 0.5; ctx.stroke();
+      ctx.globalAlpha = alpha * 0.25; ctx.lineWidth = 0.4;
+      for (let i = 1; i <= 5; i++) {
+        const t = i / 6, bx = lerp(0, curlX * 0.5, t), by = -l * t;
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx + w * 0.3 * t, by - l * 0.06, bx + w * (0.4 + t * 0.1), by + l * 0.04); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx - w * 0.3 * t, by - l * 0.06, bx - w * (0.4 + t * 0.1), by + l * 0.04); ctx.stroke();
       }
       ctx.restore();
     }
 
     function drawStamen(ctx, cx, cy, alpha) {
-      if(alpha < 0.01) return;
+      if (alpha < 0.01) return;
       ctx.save(); ctx.globalAlpha = alpha;
-      for(let i=0; i<18; i++) {
-        const angle = (i/18)*Math.PI*2 + time*0.003, len = 22 + Math.sin(i*2.3+time*0.01)*4, wobble = Math.sin(time*0.02 + i)*1.5;
-        const ex = cx + Math.cos(angle+wobble*0.05)*len, ey = cy + Math.sin(angle+wobble*0.05)*len*0.8;
-        ctx.beginPath(); ctx.moveTo(cx+Math.cos(angle)*4, cy+Math.sin(angle)*3);
-        ctx.quadraticCurveTo(cx+Math.cos(angle)*len*0.5+Math.cos(angle+Math.PI/2)*wobble, cy+Math.sin(angle)*len*0.4+Math.sin(angle+Math.PI/2)*wobble, ex, ey);
-        ctx.strokeStyle = `rgba(240,215,80,${0.6*alpha})`; ctx.lineWidth = 0.7; ctx.stroke();
-        const ag = ctx.createRadialGradient(ex,ey,0,ex,ey,3); ag.addColorStop(0,'rgba(255,240,100,0.95)'); ag.addColorStop(0.6,'rgba(220,180,50,0.8)'); ag.addColorStop(1,'rgba(180,130,20,0.4)');
-        ctx.beginPath(); ctx.ellipse(ex, ey, 2.5, 1.8, angle, 0, Math.PI*2); ctx.fillStyle = ag; ctx.fill();
+      for (let i = 0; i < 18; i++) {
+        const angle = (i / 18) * Math.PI * 2 + time * 0.003, len = 22 + Math.sin(i * 2.3 + time * 0.01) * 4, wobble = Math.sin(time * 0.02 + i) * 1.5;
+        const ex = cx + Math.cos(angle + wobble * 0.05) * len, ey = cy + Math.sin(angle + wobble * 0.05) * len * 0.8;
+        ctx.beginPath(); ctx.moveTo(cx + Math.cos(angle) * 4, cy + Math.sin(angle) * 3);
+        ctx.quadraticCurveTo(cx + Math.cos(angle) * len * 0.5 + Math.cos(angle + Math.PI / 2) * wobble, cy + Math.sin(angle) * len * 0.4 + Math.sin(angle + Math.PI / 2) * wobble, ex, ey);
+        ctx.strokeStyle = `rgba(240,215,80,${0.6 * alpha})`; ctx.lineWidth = 0.7; ctx.stroke();
+        const ag = ctx.createRadialGradient(ex, ey, 0, ex, ey, 3); ag.addColorStop(0, 'rgba(255,240,100,0.95)'); ag.addColorStop(0.6, 'rgba(220,180,50,0.8)'); ag.addColorStop(1, 'rgba(180,130,20,0.4)');
+        ctx.beginPath(); ctx.ellipse(ex, ey, 2.5, 1.8, angle, 0, Math.PI * 2); ctx.fillStyle = ag; ctx.fill();
       }
-      const cg = ctx.createRadialGradient(cx,cy,0,cx,cy,10); cg.addColorStop(0,'rgba(255,245,180,1)'); cg.addColorStop(0.5,'rgba(240,210,100,0.9)'); cg.addColorStop(1,'rgba(200,160,50,0.3)');
-      ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI*2); ctx.fillStyle = cg; ctx.fill();
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 10); cg.addColorStop(0, 'rgba(255,245,180,1)'); cg.addColorStop(0.5, 'rgba(240,210,100,0.9)'); cg.addColorStop(1, 'rgba(200,160,50,0.3)');
+      ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fillStyle = cg; ctx.fill();
       ctx.restore();
     }
 
     function drawStem(ctx, cx, cy, alpha) {
-      ctx.save(); ctx.globalAlpha = alpha*0.7;
-      const sg = ctx.createLinearGradient(cx-3, cy, cx+3, cy+80); sg.addColorStop(0,'rgba(100,160,80,0.8)'); sg.addColorStop(1,'rgba(70,120,50,0.3)');
-      ctx.beginPath(); ctx.moveTo(cx, cy+5); ctx.quadraticCurveTo(cx+4, cy+40, cx+2, cy+80); ctx.lineWidth = 3; ctx.strokeStyle = sg; ctx.stroke();
+      ctx.save(); ctx.globalAlpha = alpha * 0.7;
+      const sg = ctx.createLinearGradient(cx - 3, cy, cx + 3, cy + 80); sg.addColorStop(0, 'rgba(100,160,80,0.8)'); sg.addColorStop(1, 'rgba(70,120,50,0.3)');
+      ctx.beginPath(); ctx.moveTo(cx, cy + 5); ctx.quadraticCurveTo(cx + 4, cy + 40, cx + 2, cy + 80); ctx.lineWidth = 3; ctx.strokeStyle = sg; ctx.stroke();
       ctx.restore();
     }
 
     function drawBud(ctx, cx, cy, size) {
       ctx.save();
-      for(let i=0; i<5; i++) {
-        ctx.save(); ctx.translate(cx, cy); ctx.rotate((i/5)*Math.PI*2); ctx.globalAlpha = 0.7;
-        const sg = ctx.createLinearGradient(0,0,0,-size*1.4); sg.addColorStop(0,'rgba(80,140,60,0.9)'); sg.addColorStop(1,'rgba(100,170,80,0.4)');
-        ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(-size*0.25,-size*0.5,-size*0.3,-size,-size*0.1,-size*1.3); ctx.bezierCurveTo(size*0.1,-size,size*0.25,-size*0.5,0,0); ctx.fillStyle = sg; ctx.fill();
+      for (let i = 0; i < 5; i++) {
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate((i / 5) * Math.PI * 2); ctx.globalAlpha = 0.7;
+        const sg = ctx.createLinearGradient(0, 0, 0, -size * 1.4); sg.addColorStop(0, 'rgba(80,140,60,0.9)'); sg.addColorStop(1, 'rgba(100,170,80,0.4)');
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-size * 0.25, -size * 0.5, -size * 0.3, -size, -size * 0.1, -size * 1.3); ctx.bezierCurveTo(size * 0.1, -size, size * 0.25, -size * 0.5, 0, 0); ctx.fillStyle = sg; ctx.fill();
         ctx.restore();
       }
-      const bg = ctx.createRadialGradient(cx-size*0.2, cy-size*0.3, 0, cx, cy, size); bg.addColorStop(0,'rgba(248,240,255,0.95)'); bg.addColorStop(0.5,'rgba(220,195,235,0.85)'); bg.addColorStop(1,'rgba(170,130,190,0.5)');
-      ctx.beginPath(); ctx.ellipse(cx, cy, size*0.55, size, 0, 0, Math.PI*2); ctx.fillStyle = bg; ctx.globalAlpha = 1; ctx.fill();
+      const bg = ctx.createRadialGradient(cx - size * 0.2, cy - size * 0.3, 0, cx, cy, size); bg.addColorStop(0, 'rgba(248,240,255,0.95)'); bg.addColorStop(0.5, 'rgba(220,195,235,0.85)'); bg.addColorStop(1, 'rgba(170,130,190,0.5)');
+      ctx.beginPath(); ctx.ellipse(cx, cy, size * 0.55, size, 0, 0, Math.PI * 2); ctx.fillStyle = bg; ctx.globalAlpha = 1; ctx.fill();
       ctx.restore();
     }
 
     function drawMiniFlower(mf) {
-      const b = easeOut(mf.bloom); if(b < 0.01) return;
+      const b = easeOut(mf.bloom); if (b < 0.01) return;
       authCtx.save(); authCtx.translate(mf.x, mf.y); authCtx.rotate(mf.angle); authCtx.scale(mf.size, mf.size);
-      const gr = 80 * b; const gg = authCtx.createRadialGradient(0,0,0,0,0,gr); gg.addColorStop(0, `rgba(255,225,215,${0.35*b})`); gg.addColorStop(1, 'transparent');
-      authCtx.fillStyle = gg; authCtx.beginPath(); authCtx.arc(0,0,gr,0,Math.PI*2); authCtx.fill();
-      if(mf.bloom < 0.15) drawBud(authCtx, 0, 0, 20 * (1 - mf.bloom/0.15*0.3));
+      const gr = 80 * b; const gg = authCtx.createRadialGradient(0, 0, 0, 0, 0, gr); gg.addColorStop(0, `rgba(255,225,215,${0.35 * b})`); gg.addColorStop(1, 'transparent');
+      authCtx.fillStyle = gg; authCtx.beginPath(); authCtx.arc(0, 0, gr, 0, Math.PI * 2); authCtx.fill();
+      if (mf.bloom < 0.15) drawBud(authCtx, 0, 0, 20 * (1 - mf.bloom / 0.15 * 0.3));
       else {
         const spr = lerp(0.02, 1, b);
-        for(let i=0; i<6; i++) {
-          const ang = (i/6)*Math.PI*2 - Math.PI/2; authCtx.save(); authCtx.rotate(ang);
-          const pL = 90*spr, pW = 35*Math.min(spr*1.3,1), cur = lerp(0,3,b)*Math.sin(time*0.008+i+mf.x);
-          drawPetal(authCtx, pL, pW, `rgba(255,250,255,${0.9*b})`, `rgba(238,222,242,${0.8*b})`, `rgba(200,170,215,${0.6*b})`, Math.min(b*1.4,1), cur, cur*0.4);
+        for (let i = 0; i < 6; i++) {
+          const ang = (i / 6) * Math.PI * 2 - Math.PI / 2; authCtx.save(); authCtx.rotate(ang);
+          const pL = 90 * spr, pW = 35 * Math.min(spr * 1.3, 1), cur = lerp(0, 3, b) * Math.sin(time * 0.008 + i + mf.x);
+          drawPetal(authCtx, pL, pW, `rgba(255,250,255,${0.9 * b})`, `rgba(238,222,242,${0.8 * b})`, `rgba(200,170,215,${0.6 * b})`, Math.min(b * 1.4, 1), cur, cur * 0.4);
           authCtx.restore();
         }
-        if(mf.bloom > 0.4) {
-          const b2 = easeOut(Math.max(0,(mf.bloom-0.4)/0.6));
-          for(let i=0; i<6; i++) {
-            const ang = (i/6)*Math.PI*2 - Math.PI/2 + Math.PI/6; authCtx.save(); authCtx.rotate(ang);
-            const pL = 62*b2, pW = 24*Math.min(b2*1.4,1), cur = lerp(0,4,b2)*Math.sin(time*0.007+i+mf.y);
-            drawPetal(authCtx, pL, pW, `rgba(252,246,255,${0.82*b2})`, `rgba(232,218,245,${0.7*b2})`, `rgba(195,165,218,${0.55*b2})`, Math.min(b2*1.4,1), cur, cur*0.5);
+        if (mf.bloom > 0.4) {
+          const b2 = easeOut(Math.max(0, (mf.bloom - 0.4) / 0.6));
+          for (let i = 0; i < 6; i++) {
+            const ang = (i / 6) * Math.PI * 2 - Math.PI / 2 + Math.PI / 6; authCtx.save(); authCtx.rotate(ang);
+            const pL = 62 * b2, pW = 24 * Math.min(b2 * 1.4, 1), cur = lerp(0, 4, b2) * Math.sin(time * 0.007 + i + mf.y);
+            drawPetal(authCtx, pL, pW, `rgba(252,246,255,${0.82 * b2})`, `rgba(232,218,245,${0.7 * b2})`, `rgba(195,165,218,${0.55 * b2})`, Math.min(b2 * 1.4, 1), cur, cur * 0.5);
             authCtx.restore();
           }
         }
-        drawStamen(authCtx, 0, 0, easeInOut(Math.max(0,(mf.bloom-0.65)/0.35))*0.9);
+        drawStamen(authCtx, 0, 0, easeInOut(Math.max(0, (mf.bloom - 0.65) / 0.35)) * 0.9);
       }
       authCtx.restore();
     }
 
     function renderAuthLoop() {
       if (!authCtx || !document.getElementById('s-auth').classList.contains('active')) {
-          requestAnimationFrame(renderAuthLoop);
-          return;
+        requestAnimationFrame(renderAuthLoop);
+        return;
       }
       authCtx.clearRect(0, 0, 390, 844);
       time++;
-      
+
       const bG = authCtx.createRadialGradient(195, 200, 0, 195, 420, 580);
-      bG.addColorStop(0,'#f2d4cc'); bG.addColorStop(0.35,'#e8c4b8'); bG.addColorStop(0.65,'#dba898'); bG.addColorStop(1,'#c98a7a');
-      authCtx.fillStyle = bG; authCtx.fillRect(0,0,390,844);
+      bG.addColorStop(0, '#f2d4cc'); bG.addColorStop(0.35, '#e8c4b8'); bG.addColorStop(0.65, '#dba898'); bG.addColorStop(1, '#c98a7a');
+      authCtx.fillStyle = bG; authCtx.fillRect(0, 0, 390, 844);
 
       stars.forEach(s => {
-        authCtx.globalAlpha = s.base*0.4+Math.sin(time*s.speed+s.flicker)*0.08;
-        authCtx.beginPath(); authCtx.arc(s.x, s.y, s.r*0.8, 0, Math.PI*2);
+        authCtx.globalAlpha = s.base * 0.4 + Math.sin(time * s.speed + s.flicker) * 0.08;
+        authCtx.beginPath(); authCtx.arc(s.x, s.y, s.r * 0.8, 0, Math.PI * 2);
         authCtx.fillStyle = 'rgba(255,240,235,0.9)'; authCtx.fill();
       });
       authCtx.globalAlpha = 1;
 
-      miniFlowers.forEach(mf => { 
-        mf.bloom += (mf.target - mf.bloom)*0.04;
+      miniFlowers.forEach(mf => {
+        mf.bloom += (mf.target - mf.bloom) * 0.04;
         drawMiniFlower(mf);
       });
 
-      const cx = 195, cy = 270, b = easeOut(bloom), b2 = easeInOut(Math.max(0,(bloom-0.3)/0.7)), b3 = easeInOut(Math.max(0,(bloom-0.6)/0.4));
-      if(bloom > 0.1) {
-        const gR = 60+b*80, gG = authCtx.createRadialGradient(cx,cy,0,cx,cy,gR);
-        gG.addColorStop(0,`rgba(255,220,210,${0.25*b})`); gG.addColorStop(0.5,`rgba(220,160,140,${0.12*b})`); gG.addColorStop(1,'transparent');
-        authCtx.fillStyle = gG; authCtx.beginPath(); authCtx.arc(cx,cy,gR,0,Math.PI*2); authCtx.fill();
+      const cx = 195, cy = 270, b = easeOut(bloom), b2 = easeInOut(Math.max(0, (bloom - 0.3) / 0.7)), b3 = easeInOut(Math.max(0, (bloom - 0.6) / 0.4));
+      if (bloom > 0.1) {
+        const gR = 60 + b * 80, gG = authCtx.createRadialGradient(cx, cy, 0, cx, cy, gR);
+        gG.addColorStop(0, `rgba(255,220,210,${0.25 * b})`); gG.addColorStop(0.5, `rgba(220,160,140,${0.12 * b})`); gG.addColorStop(1, 'transparent');
+        authCtx.fillStyle = gG; authCtx.beginPath(); authCtx.arc(cx, cy, gR, 0, Math.PI * 2); authCtx.fill();
       }
-      drawStem(authCtx, cx, cy, 0.3+b*0.4);
-      if(bloom < 0.15) drawBud(authCtx, cx, cy, lerp(28,18,bloom/0.15));
+      drawStem(authCtx, cx, cy, 0.3 + b * 0.4);
+      if (bloom < 0.15) drawBud(authCtx, cx, cy, lerp(28, 18, bloom / 0.15));
       else {
-        [{l:95,w:38},{l:100,w:40},{l:92,w:36},{l:98,w:39},{l:96,w:37},{l:93,w:38}].forEach((p,i)=>{
-          const ang = (i/6)*Math.PI*2-Math.PI/2; authCtx.save(); authCtx.translate(cx,cy); authCtx.rotate(ang);
-          const spr=lerp(0.02,1,b), pL=p.l*spr, pW=p.w*Math.min(spr*1.3,1), cur=lerp(0,4,b)*Math.sin(time*0.008+i);
-          drawPetal(authCtx, pL, pW, `rgba(255,250,255,${0.95*b})`, `rgba(240,225,245,${0.88*b})`, `rgba(200,170,215,${0.7*b})`, Math.min(b*1.5,1), cur, cur*0.5);
+        [{ l: 95, w: 38 }, { l: 100, w: 40 }, { l: 92, w: 36 }, { l: 98, w: 39 }, { l: 96, w: 37 }, { l: 93, w: 38 }].forEach((p, i) => {
+          const ang = (i / 6) * Math.PI * 2 - Math.PI / 2; authCtx.save(); authCtx.translate(cx, cy); authCtx.rotate(ang);
+          const spr = lerp(0.02, 1, b), pL = p.l * spr, pW = p.w * Math.min(spr * 1.3, 1), cur = lerp(0, 4, b) * Math.sin(time * 0.008 + i);
+          drawPetal(authCtx, pL, pW, `rgba(255,250,255,${0.95 * b})`, `rgba(240,225,245,${0.88 * b})`, `rgba(200,170,215,${0.7 * b})`, Math.min(b * 1.5, 1), cur, cur * 0.5);
           authCtx.restore();
         });
-        if(bloom > 0.35) {
-          [{l:70,w:28},{l:73,w:30},{l:68,w:27},{l:72,w:29},{l:69,w:28},{l:71,w:29}].forEach((p,i)=>{
-            const ang = (i/6)*Math.PI*2-Math.PI/2+Math.PI/6; authCtx.save(); authCtx.translate(cx,cy); authCtx.rotate(ang);
-            const s2=easeOut(b2), pL=p.l*s2, pW=p.w*Math.min(s2*1.4,1), cur=lerp(0,6,b2)*Math.sin(time*0.007+i+10);
-            drawPetal(authCtx, pL, pW, `rgba(252,246,255,${0.82*b2})`, `rgba(232,218,245,${0.7*b2})`, `rgba(195,165,218,${0.55*b2})`, Math.min(b2*1.4,1), cur, cur*0.6);
+        if (bloom > 0.35) {
+          [{ l: 70, w: 28 }, { l: 73, w: 30 }, { l: 68, w: 27 }, { l: 72, w: 29 }, { l: 69, w: 28 }, { l: 71, w: 29 }].forEach((p, i) => {
+            const ang = (i / 6) * Math.PI * 2 - Math.PI / 2 + Math.PI / 6; authCtx.save(); authCtx.translate(cx, cy); authCtx.rotate(ang);
+            const s2 = easeOut(b2), pL = p.l * s2, pW = p.w * Math.min(s2 * 1.4, 1), cur = lerp(0, 6, b2) * Math.sin(time * 0.007 + i + 10);
+            drawPetal(authCtx, pL, pW, `rgba(252,246,255,${0.82 * b2})`, `rgba(232,218,245,${0.7 * b2})`, `rgba(195,165,218,${0.55 * b2})`, Math.min(b2 * 1.4, 1), cur, cur * 0.6);
             authCtx.restore();
           });
         }
         drawStamen(authCtx, cx, cy, b3);
-        if(bloom > 0.78 && Math.random()>0.93) spawnPollen(cx, cy);
+        if (bloom > 0.78 && Math.random() > 0.93) spawnPollen(cx, cy);
       }
-      for(let i=pollens.length-1;i>=0;i--){
-        const p=pollens[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.015; p.vx*=0.99; p.life-=p.decay;
-        if(p.life<=0){ pollens.splice(i,1); continue; }
-        authCtx.globalAlpha=p.life*0.8; authCtx.beginPath(); authCtx.arc(p.x,p.y,p.r,0,Math.PI*2); authCtx.fillStyle=p.color; authCtx.fill();
+      for (let i = pollens.length - 1; i >= 0; i--) {
+        const p = pollens[i]; p.x += p.vx; p.y += p.vy; p.vy += 0.015; p.vx *= 0.99; p.life -= p.decay;
+        if (p.life <= 0) { pollens.splice(i, 1); continue; }
+        authCtx.globalAlpha = p.life * 0.8; authCtx.beginPath(); authCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2); authCtx.fillStyle = p.color; authCtx.fill();
       }
-      authCtx.globalAlpha=1; bloom += (targetBloom - bloom)*0.05;
+      authCtx.globalAlpha = 1; bloom += (targetBloom - bloom) * 0.05;
       requestAnimationFrame(renderAuthLoop);
     }
     renderAuthLoop();
@@ -4816,7 +4864,7 @@
         err.style.display = 'block';
         return;
       }
-      
+
       if (authMode === 'register' && kvkk && !kvkk.checked) {
         err.textContent = "Lütfen KVKK metnini onaylayın.";
         err.style.display = 'block';
@@ -4881,8 +4929,8 @@
       } catch (e) {
         const msg = e.message || '';
         if (msg.includes('session_not_found')) {
-           location.reload(); 
-           return;
+          location.reload();
+          return;
         }
         alert('Çıkış yapılırken bir hata oluştu: ' + (msg.includes('Network') ? 'Ağ hatası' : msg));
       }
@@ -4903,20 +4951,20 @@
             goTab('meydan');
           }
           if (tabB) tabB.style.display = 'flex';
-          
+
           // Force refresh profile with session metadata
-          lPr(true).then(p => { 
-              if (session.user.user_metadata?.first_name) {
-                  p.fn = session.user.user_metadata.first_name;
-                  p.ln = session.user.user_metadata.last_name || '';
-                  if (!p.joined) {
-                    const now = new Date();
-                    p.joined = `${MT[now.getMonth()]} ${now.getFullYear()}`;
-                  }
-                  sPr(p).then(() => renderPR());
-              } else {
-                  renderPR();
+          lPr(true).then(p => {
+            if (session.user.user_metadata?.first_name) {
+              p.fn = session.user.user_metadata.first_name;
+              p.ln = session.user.user_metadata.last_name || '';
+              if (!p.joined) {
+                const now = new Date();
+                p.joined = `${MT[now.getMonth()]} ${now.getFullYear()}`;
               }
+              sPr(p).then(() => renderPR());
+            } else {
+              renderPR();
+            }
           });
           renderF();
         } else {
@@ -4927,7 +4975,7 @@
 
       const SUPABASE_URL = 'https://mgbpaxnxbgozzgnwuqyx.supabase.co';
       const SUPABASE_ANON_KEY = 'sb_publishable_lTUe_Gt8R6_7ySt4EgSMvA_971Q2RPt';
-      
+
       try {
         if (typeof supabase !== 'undefined') {
           supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -4954,10 +5002,11 @@
       updateBloom();
       setAuthTab('login');
     }
-    
+
     startKivilcim();
   </script>
 
 
 </body>
+
 </html>
