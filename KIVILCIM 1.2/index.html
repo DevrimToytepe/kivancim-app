@@ -3522,7 +3522,8 @@
           // Supabase kolonlarını uygulama formatına çevir
           const mapped = data.map(p => ({
             ...p,
-            author: { fn: p.author_name || 'anonim', streak: p.author_streak || 0 }
+            author: { fn: p.author_name || 'anonim', streak: p.author_streak || 0 },
+            banner: (p.banner_emoji && p.banner_bg) ? { emoji: p.banner_emoji, bg: p.banner_bg } : null
           }));
           _C_P = mapped.length > 0 ? mapped : local;
           return _C_P;
@@ -3600,7 +3601,9 @@
             comments: latest.comments || 0,
             pinned: latest.pinned || false,
             author_name: latest.author?.fn || session.user.user_metadata?.first_name || 'anonim',
-            author_streak: latest.author?.streak || 0
+            author_streak: latest.author?.streak || 0,
+            banner_emoji: latest.banner?.emoji || null,
+            banner_bg: latest.banner?.bg || null
           }]).select();
           if (data && data[0]) latest.id_db = data[0].id;
         }
@@ -3723,6 +3726,10 @@
     async function doPremium() {
       isPrem = true;
       lsSet('kv_prem', 'true');
+      const session = await getSession();
+      if (session && supabaseClient) {
+        await supabaseClient.from('profiles').upsert({ id: session.user.id, is_premium: true });
+      }
       closePM();
       await renderRH();
       await renderPR();
@@ -3821,8 +3828,40 @@
 
         const sgl = lsGet('kv_gl_posts');
         GL_POSTS = sgl ? JSON.parse(sgl) : [];
-        if (session) {
-          // Optionally load shared diaries from posts table if we identify them differently
+        if (session && supabaseClient && isPrem) {
+          // Premium kullanıcılar için diary_feed'den tüm paylaşılan günlükleri çek
+          const { data: dfData } = await supabaseClient
+            .from('diary_feed')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
+          if (dfData && dfData.length > 0) {
+            const GL_MOOD_CFG = {
+              mutlu: { bg:'linear-gradient(135deg,#f8d7b0,#f5c48a)', color:'#d4830a', label:'☀️ Mutlu' },
+              uzgun: { bg:'linear-gradient(135deg,#c8b4e8,#b09ad4)', color:'#6b47b0', label:'🌧️ Üzgün' },
+              sakin: { bg:'linear-gradient(135deg,#b8d4a8,#96bc84)', color:'#3d7a2a', label:'🌿 Sakin' },
+              umutlu: { bg:'linear-gradient(135deg,#a8d4c8,#84bcb0)', color:'#2a7a68', label:'🌱 Umutlu' },
+              kaygili: { bg:'linear-gradient(135deg,#d4c8e8,#c0b0d8)', color:'#5a3d8a', label:'🌀 Kaygılı' },
+              yorgun: { bg:'linear-gradient(135deg,#d4b8a8,#c0a090)', color:'#7a4a38', label:'🍂 Yorgun' }
+            };
+            GL_POSTS = dfData.map(d => {
+              const cfg = GL_MOOD_CFG[d.mood] || GL_MOOD_CFG['mutlu'];
+              return {
+                id: d.id,
+                sourceDate: d.created_at,
+                mood: d.mood,
+                bg: cfg.bg,
+                moodColor: cfg.color,
+                moodLabel: cfg.label,
+                text: d.snippet,
+                streak: d.streak || 0,
+                author: d.author_name || 'anonim',
+                time: new Date(d.created_at).getTime(),
+                likes: 0,
+                comments: 0
+              };
+            });
+          }
         }
       } catch (e) {
         POSTS = JSON.parse(JSON.stringify(DP));
@@ -4376,6 +4415,11 @@
           `<span style="margin-right:2px">${kSVG(j + 1, 10 + j * 0.5)}</span>`).join('');
 
         return `<div class="gl-card ${isExp ? 'expanded' : ''}" style="background:${p.bg}; animation-delay:${i * 0.06}s" onclick="togGLExp(event, ${p.id})">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.5)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.4)"/></svg></div>
+            <span style="font-size:12px;font-weight:600;color:rgba(107,58,48,0.8)">${p.author || 'anonim'}</span>
+            <span style="font-size:11px;color:rgba(107,58,48,0.5);margin-left:auto">${streakDots} ${p.streak} gün</span>
+          </div>
           <div class="gl-mood" style="background:${p.moodColor}">${p.moodLabel}</div>
           <div class="gl-text">${p.text}</div>
           ${p.text.length > 100 ? `<div class="gl-more">Devamını Gör...</div>` : ''}
@@ -4560,19 +4604,18 @@
       });
 
       const session = await getSession();
-      if (session) {
-        await supabaseClient.from('posts').insert([{
+      if (session && supabaseClient) {
+        await supabaseClient.from('diary_feed').insert([{
           user_id: session.user.id,
-          content: `[GÜNLÜK] ${content}`,
           mood: gpaySelMood || 'mutlu',
-          likes: 0,
-          comments: 0,
-          pinned: false,
-          author_name: session.user.user_metadata?.first_name || 'anonim',
-          author_streak: 0
+          snippet: content,
+          streak: streak,
+          author_name: pr?.fn || session.user.user_metadata?.first_name || 'anonim',
+          author_streak: streak
         }]);
       }
 
+      lsSet('kv_gl_posts', JSON.stringify(GL_POSTS));
       await saveM();
       closeGunlukPaylas();
       openGunlukEkrani();
@@ -4943,6 +4986,12 @@
         currentUser = session ? session.user : null;
         // Hesap değişince cache temizle
         _C_D = null; _C_P = null; _C_Pr = null;
+        // Premium durumunu bu kullanıcı için yeniden yükle
+        isPrem = lsGet('kv_prem') === 'true';
+        if (currentUser && supabaseClient) {
+          supabaseClient.from('profiles').select('is_premium').eq('id', currentUser.id).maybeSingle()
+            .then(({ data }) => { if (data?.is_premium) { isPrem = true; lsSet('kv_prem','true'); } });
+        }
         const tabB = document.querySelector('.tab-bar');
 
         if (session) {
