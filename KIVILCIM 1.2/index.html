@@ -3520,8 +3520,20 @@
         const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
         if (!error && data) {
           // Supabase kolonlarını uygulama formatına çevir
+          // Kullanıcının hangi postları beğendiğini çek
+          let likedPostIds = new Set();
+          const session2 = await getSession();
+          if (session2) {
+            const { data: likedData } = await supabaseClient
+              .from('likes')
+              .select('post_id')
+              .eq('user_id', session2.user.id);
+            if (likedData) likedData.forEach(l => likedPostIds.add(l.post_id));
+          }
           const mapped = data.map(p => ({
             ...p,
+            id_db: p.id,
+            liked: likedPostIds.has(p.id),
             author: { fn: p.author_name || 'anonim', streak: p.author_streak || 0 },
             banner: (p.banner_emoji && p.banner_bg) ? { emoji: p.banner_emoji, bg: p.banner_bg } : null
           }));
@@ -3612,13 +3624,27 @@
 
     async function sC(postId, text) {
       const session = await getSession();
-      if (session) {
-        await supabaseClient.from('comments').insert([{
-          post_id: postId,
+      if (session && supabaseClient) {
+        const pr = await lPr();
+        const streak = await calcS();
+        // postId UUID mi yoksa localStorage id mi kontrol et
+        const post = POSTS.find(p => p.id == postId);
+        const realPostId = post?.id_db || postId;
+        const { data } = await supabaseClient.from('comments').insert([{
+          post_id: realPostId,
           user_id: session.user.id,
           text: text,
-          likes: 0
-        }]);
+          likes: 0,
+          author_name: pr?.fn || session.user.user_metadata?.first_name || 'anonim',
+          author_streak: streak
+        }]).select();
+        if (data && data[0]) {
+          // CMTS'e id_db ekle
+          const cmtList = CMTS[postId];
+          if (cmtList && cmtList.length > 0) {
+            cmtList[cmtList.length - 1].id_db = data[0].id;
+          }
+        }
       }
     }
 
@@ -3817,7 +3843,7 @@
           if (dbCmts) {
             CMTS = dbCmts.reduce((acc, c) => {
               if (!acc[c.post_id]) acc[c.post_id] = [];
-              acc[c.post_id].push({ id: c.id, id_db: c.id, text: c.text, time: fmtT(c.created_at), likes: c.likes || 0, liked: false });
+              acc[c.post_id].push({ id: c.id, id_db: c.id, text: c.text, time: fmtT(c.created_at), likes: c.likes || 0, liked: false, author: c.author_name || 'anonim', streak: c.author_streak || 0 });
               return acc;
             }, {});
           }
@@ -3837,12 +3863,12 @@
             .limit(50);
           if (dfData && dfData.length > 0) {
             const GL_MOOD_CFG = {
-              mutlu: { bg:'linear-gradient(135deg,#f8d7b0,#f5c48a)', color:'#d4830a', label:'☀️ Mutlu' },
-              uzgun: { bg:'linear-gradient(135deg,#c8b4e8,#b09ad4)', color:'#6b47b0', label:'🌧️ Üzgün' },
-              sakin: { bg:'linear-gradient(135deg,#b8d4a8,#96bc84)', color:'#3d7a2a', label:'🌿 Sakin' },
-              umutlu: { bg:'linear-gradient(135deg,#a8d4c8,#84bcb0)', color:'#2a7a68', label:'🌱 Umutlu' },
-              kaygili: { bg:'linear-gradient(135deg,#d4c8e8,#c0b0d8)', color:'#5a3d8a', label:'🌀 Kaygılı' },
-              yorgun: { bg:'linear-gradient(135deg,#d4b8a8,#c0a090)', color:'#7a4a38', label:'🍂 Yorgun' }
+              mutlu: { bg: 'linear-gradient(135deg,#f8d7b0,#f5c48a)', color: '#d4830a', label: '☀️ Mutlu' },
+              uzgun: { bg: 'linear-gradient(135deg,#c8b4e8,#b09ad4)', color: '#6b47b0', label: '🌧️ Üzgün' },
+              sakin: { bg: 'linear-gradient(135deg,#b8d4a8,#96bc84)', color: '#3d7a2a', label: '🌿 Sakin' },
+              umutlu: { bg: 'linear-gradient(135deg,#a8d4c8,#84bcb0)', color: '#2a7a68', label: '🌱 Umutlu' },
+              kaygili: { bg: 'linear-gradient(135deg,#d4c8e8,#c0b0d8)', color: '#5a3d8a', label: '🌀 Kaygılı' },
+              yorgun: { bg: 'linear-gradient(135deg,#d4b8a8,#c0a090)', color: '#7a4a38', label: '🍂 Yorgun' }
             };
             GL_POSTS = dfData.map(d => {
               const cfg = GL_MOOD_CFG[d.mood] || GL_MOOD_CFG['mutlu'];
@@ -3931,7 +3957,28 @@
     }
 
     function togC(e, id) { if (e.target.closest('.abt') || e.target.closest('.cinrow') || e.target.closest('.clk')) return; openC.has(id) ? openC.delete(id) : openC.add(id); renderF(); }
-    async function togL(e, id) { e.stopPropagation(); const p = POSTS.find(p => p.id == id); if (!p) return; p.liked = !p.liked; p.likes += p.liked ? 1 : -1; await saveM(); renderF(); if (p.id_db) await supabaseClient.from('posts').update({ likes: p.likes }).eq('id', p.id_db); }
+    async function togL(e, id) {
+      e.stopPropagation();
+      const p = POSTS.find(p => p.id == id);
+      if (!p) return;
+      p.liked = !p.liked;
+      p.likes += p.liked ? 1 : -1;
+      await saveM();
+      renderF();
+      if (supabaseClient) {
+        const session = await getSession();
+        if (session) {
+          const postId = p.id_db || p.id;
+          if (p.liked) {
+            await supabaseClient.from('likes').upsert({ user_id: session.user.id, post_id: postId });
+            await supabaseClient.from('posts').update({ likes: p.likes }).eq('id', postId);
+          } else {
+            await supabaseClient.from('likes').delete().eq('user_id', session.user.id).eq('post_id', postId);
+            await supabaseClient.from('posts').update({ likes: p.likes }).eq('id', postId);
+          }
+        }
+      }
+    }
     async function togCL(pid, cid) { const l = CMTS[pid]; if (!l) return; const c = l.find(c => c.id == cid); if (!c) return; c.liked = !c.liked; c.likes += c.liked ? 1 : -1; await saveM(); renderF(); if (c.id_db) await supabaseClient.from('comments').update({ likes: c.likes }).eq('id', c.id_db); }
     async function sendC(pid) {
       const inp = document.getElementById(`ci${pid}`); const t = inp.value.trim(); if (!t) return;
@@ -4990,7 +5037,7 @@
         isPrem = lsGet('kv_prem') === 'true';
         if (currentUser && supabaseClient) {
           supabaseClient.from('profiles').select('is_premium').eq('id', currentUser.id).maybeSingle()
-            .then(({ data }) => { if (data?.is_premium) { isPrem = true; lsSet('kv_prem','true'); } });
+            .then(({ data }) => { if (data?.is_premium) { isPrem = true; lsSet('kv_prem', 'true'); } });
         }
         const tabB = document.querySelector('.tab-bar');
 
