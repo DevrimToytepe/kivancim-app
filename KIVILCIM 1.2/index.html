@@ -3645,6 +3645,11 @@
           if (cmtList && cmtList.length > 0) {
             cmtList[cmtList.length - 1].id_db = data[0].id;
           }
+          // Post sahibine bildirim gönder
+          const postOwner = POSTS.find(p => String(p.id_db) === String(realPostId) || String(p.id) === String(postId));
+          if (postOwner) {
+            await pushNotif(postOwner.user_id, 'comment', pr?.fn || 'Biri', postOwner.content);
+          }
         }
       }
     }
@@ -3733,7 +3738,7 @@
       if (n === 'gunluk') initG();
       if (n === 'ruhhali') renderRH();
       if (n === 'profil') renderPR();
-      if (n === 'bildirim') { renderNotifs(); }
+      if (n === 'bildirim') { loadNotifs().then(() => renderNotifs()); markNotifsRead(); }
       tB = n === 'gunluk' ? (document.getElementById('dta')?.value.length || 0) / 500 : 0;
     }
 
@@ -3974,6 +3979,9 @@
           if (p.liked) {
             await supabaseClient.from('likes').upsert({ user_id: session.user.id, post_id: postId });
             await supabaseClient.from('posts').update({ likes: p.likes }).eq('id', postId);
+            // Post sahibine bildirim gönder
+            const pr = await lPr();
+            await pushNotif(p.user_id, 'like', pr?.fn || 'Biri', p.content);
           } else {
             await supabaseClient.from('likes').delete().eq('user_id', session.user.id).eq('post_id', postId);
             await supabaseClient.from('posts').update({ likes: p.likes }).eq('id', postId);
@@ -4201,10 +4209,68 @@
         const saved = lsGet('kv_notifs');
         NOTIFS = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_NOTIFS));
       } catch (e) { NOTIFS = JSON.parse(JSON.stringify(DEFAULT_NOTIFS)); }
+      // Supabase'den de yükle
+      loadNotifs();
     }
 
     function saveNotifs() {
       try { lsSet('kv_notifs', JSON.stringify(NOTIFS)); } catch (e) { }
+    }
+
+    async function pushNotif(toUserId, type, fromName, postContent) {
+      if (!supabaseClient || !toUserId) return;
+      const session = await getSession();
+      if (!session || session.user.id === toUserId) return; // Kendine bildirim gönderme
+      const icons = { like: '❤️', comment: '💬' };
+      const texts = {
+        like: `<b>${fromName}</b> paylaşımını beğendi`,
+        comment: `<b>${fromName}</b> paylaşımına yorum yaptı`
+      };
+      await supabaseClient.from('notifications').insert([{
+        to_user_id: toUserId,
+        from_user_id: session.user.id,
+        type: type,
+        icon: icons[type] || '🔔',
+        text: texts[type] || '',
+        post_snippet: postContent ? postContent.slice(0, 60) : '',
+        read: false
+      }]);
+    }
+
+    async function loadNotifs() {
+      if (!supabaseClient) return;
+      const session = await getSession();
+      if (!session) return;
+      const { data } = await supabaseClient
+        .from('notifications')
+        .select('*')
+        .eq('to_user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .limit(30);
+      if (data && data.length > 0) {
+        NOTIFS = data.map(n => ({
+          id: n.id,
+          type: n.type,
+          icon: n.icon,
+          text: n.text,
+          post_snippet: n.post_snippet,
+          time: fmtT(n.created_at),
+          read: n.read,
+          db_id: n.id
+        }));
+        saveNotifs();
+        renderNotifs();
+      }
+    }
+
+    async function markNotifsRead() {
+      if (!supabaseClient) return;
+      const session = await getSession();
+      if (!session) return;
+      await supabaseClient.from('notifications')
+        .update({ read: true })
+        .eq('to_user_id', session.user.id)
+        .eq('read', false);
     }
 
     function renderNotifs() {
