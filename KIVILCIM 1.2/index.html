@@ -3931,7 +3931,7 @@
           flowerStr += `<div style="display:inline-flex; align-items:center; margin-left:2px;">${kSVG(stS, fSize)}</div>`;
         }
 
-        return `<div class="pc ${p.pinned ? 'pinned' : ''}" style="animation-delay:${i * 0.06}s; ${bStyle}" onclick="togC(event,${p.id})">
+        return `<div class="pc ${p.pinned ? 'pinned' : ''}" data-pid="${p.id}" style="animation-delay:${i * 0.06}s; ${bStyle}" onclick="togC(event,this.dataset.pid)">
       ${emojiBg}
       <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; position:relative; z-index:1;">
         <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -3946,17 +3946,16 @@
       <div class="pcont" style="position:relative;z-index:1;${hasB ? 'color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.15);' : ''}">${p.content}</div>
       <div class="pfoot" style="position:relative;z-index:1;${hasB ? 'border-top:1px solid rgba(255,255,255,0.2)' : ''}"><span class="ptm" style="${hasB ? 'color:rgba(255,255,255,0.8)' : ''}">${fmtT(p.time)}</span>
       <div class="pacts">
-        <button class="abt ${p.liked ? 'liked' : ''}" onclick="togL(event,${p.id})">${kSVG(p.liked ? 3 : 0, 22)}<span class="ac" style="${hasB ? 'color:rgba(255,255,255,0.9)' : ''}">${p.likes}</span></button>
-        <button class="abt ${op ? 'liked' : ''}" onclick="togC(event,${p.id})">${fSVG(op)}<span class="ac" style="${hasB ? 'color:rgba(255,255,255,0.9)' : ''}">${p.comments}</span></button>
+        <button class="abt ${p.liked ? 'liked' : ''}" data-lid="${p.id}" onclick="togL(event,this.dataset.lid)">${kSVG(p.liked ? 3 : 0, 22)}<span class="ac" style="${hasB ? 'color:rgba(255,255,255,0.9)' : ''}">${p.likes}</span></button>
+        <button class="abt ${op ? 'liked' : ''}" data-cid="${p.id}" onclick="togC(event,this.dataset.cid)">${fSVG(op)}<span class="ac" style="${hasB ? 'color:rgba(255,255,255,0.9)' : ''}">${p.comments}</span></button>
       </div></div>
       ${op ? `<div class="csec" onclick="event.stopPropagation()">
         ${cs.map(c => `<div class="ci"><div class="cav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.45)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.35)"/></svg></div>
         <div style="flex:1"><div class="cbub">${c.text}</div><div class="cmet"><span class="ctm">${c.time}</span>
-        <button class="clk ${c.liked ? 'liked' : ''}" data-pid="${p.id}" data-cid="${c.id}" onclick="togCL(this.dataset.pid,this.dataset.cid)">${kSVG(c.liked ? 2 : 0, 13)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
+        <button class="clk ${c.liked ? 'liked' : ''}" data-tpid="${p.id}" data-tcid="${c.id}" onclick="togCL(this.dataset.tpid,this.dataset.tcid)">${kSVG(c.liked ? 2 : 0, 13)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
         <div class="cinrow"><input class="cinp" id="ci${p.id}" type="text" placeholder="Yorum yaz..." maxlength="200"
-          onkeydown="if(event.key==='Enter')sendC(${p.id})"
-          oninput="document.getElementById('cs${p.id}').disabled=!this.value.trim()"/>
-        <button class="csnd" id="cs${p.id}" onclick="sendC(${p.id})" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/></svg></button></div>
+          data-scid="${p.id}" onkeydown="if(event.key==='Enter')sendC(this.dataset.scid)" oninput="document.getElementById('cs'+this.dataset.scid).disabled=!this.value.trim()"/>
+        <button class="csnd" id="cs${p.id}" data-scid2="${p.id}" onclick="sendC(this.dataset.scid2)" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/></svg></button></div>
       </div>`: ''}
     </div>`;
       }).join('');
@@ -4304,19 +4303,18 @@
     }
 
     function notifCard(n) {
-      return `<div class="notif-item ${n.read ? 'read' : 'unread'}" data-nid="${n.id}" onclick="readNotif(this.dataset.nid)">
+      return `<div class="notif-item ${n.read ? 'read' : 'unread'}" onclick="readNotif(${n.id})">
     ${!n.read ? '<div class="notif-dot"></div>' : ''}
     <div class="notif-icon-wrap ${n.type}">${n.icon}</div>
     <div class="notif-body">
       <div class="notif-text">${n.text}</div>
-      ${n.post_snippet ? `<div style="font-size:11px;color:rgba(107,58,48,0.5);margin-top:2px;font-style:italic">"${n.post_snippet}"</div>` : ''}
       <div class="notif-time">${n.time}</div>
     </div>
   </div>`;
     }
 
     function readNotif(id) {
-      const n = NOTIFS.find(n => String(n.id) === String(id));
+      const n = NOTIFS.find(n => n.id === id);
       if (n && !n.read) { n.read = true; saveNotifs(); renderNotifs(); }
     }
 
@@ -4530,7 +4528,7 @@
         const streakDots = Array.from({ length: Math.min(p.streak, 7) }, (_, j) =>
           `<span style="margin-right:2px">${kSVG(j + 1, 10 + j * 0.5)}</span>`).join('');
 
-        return `<div class="gl-card ${isExp ? 'expanded' : ''}" style="background:${p.bg}; animation-delay:${i * 0.06}s" onclick="togGLExp(event, ${p.id})">
+        return `<div class="gl-card ${isExp ? 'expanded' : ''}" style="background:${p.bg}; animation-delay:${i * 0.06}s" data-glid="${p.id}" onclick="togGLExp(event, this.dataset.glid)">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
             <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.5)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.4)"/></svg></div>
             <span style="font-size:12px;font-weight:600;color:rgba(107,58,48,0.8)">${p.author || 'anonim'}</span>
@@ -4544,15 +4542,15 @@
             <div class="gl-time">${fmtT(p.time)}</div>
           </div>
           <div class="gl-actions" onclick="event.stopPropagation()">
-            <button class="abt ${p.liked ? 'liked' : ''}" onclick="togGLL(event,${p.id})">${kSVG(p.liked ? 3 : 0, 20)}<span class="ac" style="color:rgba(107,58,48,0.7)">${p.likes || 0}</span></button>
-            <button class="abt ${isCmtOpen ? 'liked' : ''}" onclick="togGLC(event,${p.id})">${fSVG(isCmtOpen)}<span class="ac" style="color:rgba(107,58,48,0.7)">${p.comments || 0}</span></button>
+            <button class="abt ${p.liked ? 'liked' : ''}" data-gllid="${p.id}" onclick="togGLL(event,this.dataset.gllid)">${kSVG(p.liked ? 3 : 0, 20)}<span class="ac" style="color:rgba(107,58,48,0.7)">${p.likes || 0}</span></button>
+            <button class="abt ${isCmtOpen ? 'liked' : ''}" data-glcid="${p.id}" onclick="togGLC(event,this.dataset.glcid)">${fSVG(isCmtOpen)}<span class="ac" style="color:rgba(107,58,48,0.7)">${p.comments || 0}</span></button>
           </div>
           ${isCmtOpen ? `<div class="csec" onclick="event.stopPropagation()" style="background:rgba(255,255,255,0.25); border-radius:12px; padding:10px; margin-top:10px">
             ${cs.map(c => `<div class="ci"><div class="cav" style="background:rgba(255,255,255,0.4)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.45)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.35)"/></svg></div>
             <div style="flex:1"><div class="cbub" style="background:rgba(255,255,255,0.5)">${c.text}</div><div class="cmet"><span class="ctm" style="color:rgba(107,58,48,0.5)">${c.time}</span>
-            <button class="clk ${c.liked ? 'liked' : ''}" data-pid="${p.id}" data-cid="${c.id}" onclick="togGLLC(this.dataset.pid,this.dataset.cid)">${kSVG(c.liked ? 2 : 0, 12)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
-            <div class="cinrow"><input class="cinp" id="glci${p.id}" style="background:rgba(255,255,255,0.4)" type="text" placeholder="Yorum yaz..." maxlength="200" onkeydown="if(event.key==='Enter')sendGLC(${p.id})" oninput="document.getElementById('glcs${p.id}').disabled=!this.value.trim()"/>
-            <button class="csnd" id="glcs${p.id}" onclick="sendGLC(${p.id})" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/></svg></button></div>
+            <button class="clk ${c.liked ? 'liked' : ''}" data-glpid="${p.id}" data-glcid2="${c.id}" onclick="togGLLC(this.dataset.glpid,this.dataset.glcid2)">${kSVG(c.liked ? 2 : 0, 12)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
+            <div class="cinrow"><input class="cinp" id="glci${p.id}" style="background:rgba(255,255,255,0.4)" type="text" placeholder="Yorum yaz..." maxlength="200" data-glscid="${p.id}" onkeydown="if(event.key==='Enter')sendGLC(this.dataset.glscid)" oninput="document.getElementById('glcs${p.id}').disabled=!this.value.trim()"/>
+            <button class="csnd" id="glcs${p.id}" data-glscid2="${p.id}" onclick="sendGLC(this.dataset.glscid2)" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/></svg></button></div>
           </div>` : ''}
         </div>`;
       }).join('');
