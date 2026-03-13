@@ -3952,7 +3952,7 @@
       ${op ? `<div class="csec" onclick="event.stopPropagation()">
         ${cs.map(c => `<div class="ci"><div class="cav"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.45)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.35)"/></svg></div>
         <div style="flex:1"><div class="cbub">${c.text}</div><div class="cmet"><span class="ctm">${c.time}</span>
-        <button class="clk ${c.liked ? 'liked' : ''}" onclick="togCL(${p.id},${c.id})">${kSVG(c.liked ? 2 : 0, 13)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
+        <button class="clk ${c.liked ? 'liked' : ''}" data-pid="${p.id}" data-cid="${c.id}" onclick="togCL(this.dataset.pid,this.dataset.cid)">${kSVG(c.liked ? 2 : 0, 13)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
         <div class="cinrow"><input class="cinp" id="ci${p.id}" type="text" placeholder="Yorum yaz..." maxlength="200"
           onkeydown="if(event.key==='Enter')sendC(${p.id})"
           oninput="document.getElementById('cs${p.id}').disabled=!this.value.trim()"/>
@@ -4304,18 +4304,19 @@
     }
 
     function notifCard(n) {
-      return `<div class="notif-item ${n.read ? 'read' : 'unread'}" onclick="readNotif(${n.id})">
+      return `<div class="notif-item ${n.read ? 'read' : 'unread'}" data-nid="${n.id}" onclick="readNotif(this.dataset.nid)">
     ${!n.read ? '<div class="notif-dot"></div>' : ''}
     <div class="notif-icon-wrap ${n.type}">${n.icon}</div>
     <div class="notif-body">
       <div class="notif-text">${n.text}</div>
+      ${n.post_snippet ? `<div style="font-size:11px;color:rgba(107,58,48,0.5);margin-top:2px;font-style:italic">"${n.post_snippet}"</div>` : ''}
       <div class="notif-time">${n.time}</div>
     </div>
   </div>`;
     }
 
     function readNotif(id) {
-      const n = NOTIFS.find(n => n.id === id);
+      const n = NOTIFS.find(n => String(n.id) === String(id));
       if (n && !n.read) { n.read = true; saveNotifs(); renderNotifs(); }
     }
 
@@ -4549,7 +4550,7 @@
           ${isCmtOpen ? `<div class="csec" onclick="event.stopPropagation()" style="background:rgba(255,255,255,0.25); border-radius:12px; padding:10px; margin-top:10px">
             ${cs.map(c => `<div class="ci"><div class="cav" style="background:rgba(255,255,255,0.4)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="rgba(107,58,48,0.45)"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="rgba(107,58,48,0.35)"/></svg></div>
             <div style="flex:1"><div class="cbub" style="background:rgba(255,255,255,0.5)">${c.text}</div><div class="cmet"><span class="ctm" style="color:rgba(107,58,48,0.5)">${c.time}</span>
-            <button class="clk ${c.liked ? 'liked' : ''}" onclick="togGLLC(${p.id},${c.id})">${kSVG(c.liked ? 2 : 0, 12)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
+            <button class="clk ${c.liked ? 'liked' : ''}" data-pid="${p.id}" data-cid="${c.id}" onclick="togGLLC(this.dataset.pid,this.dataset.cid)">${kSVG(c.liked ? 2 : 0, 12)}<span class="clkc">${c.likes}</span></button></div></div></div>`).join('')}
             <div class="cinrow"><input class="cinp" id="glci${p.id}" style="background:rgba(255,255,255,0.4)" type="text" placeholder="Yorum yaz..." maxlength="200" onkeydown="if(event.key==='Enter')sendGLC(${p.id})" oninput="document.getElementById('glcs${p.id}').disabled=!this.value.trim()"/>
             <button class="csnd" id="glcs${p.id}" onclick="sendGLC(${p.id})" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="white" stroke-width="2" stroke-linejoin="round" fill="none"/></svg></button></div>
           </div>` : ''}
