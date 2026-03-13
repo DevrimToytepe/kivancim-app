@@ -3639,16 +3639,15 @@
           author_name: pr?.fn || session.user.user_metadata?.first_name || 'anonim',
           author_streak: streak
         }]).select();
+        // Her durumda post sahibine bildirim gönder (data bağımsız)
+        const postOwner = POSTS.find(p => String(p.id_db) === String(realPostId) || String(p.id) === String(postId));
+        if (postOwner) {
+          await pushNotif(postOwner.user_id, 'comment', pr?.fn || 'Biri', postOwner.content);
+        }
         if (data && data[0]) {
-          // CMTS'e id_db ekle
           const cmtList = CMTS[postId];
           if (cmtList && cmtList.length > 0) {
             cmtList[cmtList.length - 1].id_db = data[0].id;
-          }
-          // Post sahibine bildirim gönder
-          const postOwner = POSTS.find(p => String(p.id_db) === String(realPostId) || String(p.id) === String(postId));
-          if (postOwner) {
-            await pushNotif(postOwner.user_id, 'comment', pr?.fn || 'Biri', postOwner.content);
           }
         }
       }
